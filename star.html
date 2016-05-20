@@ -37,11 +37,11 @@ function fx(){
 var timer;
 var rr=30;
 var m,n,c;
-var a=["red","orange","yellow","green","blue","pink","purple"]
+// var a=["red","orange","yellow","green","blue","pink","purple"]
 m=Math.floor(Math.random()*1200)
 n=Math.floor(Math.random()*600)
-c=a[Math.floor(Math.random()*7)]
-
+// c=a[Math.floor(Math.random()*7)]
+c="rgba("+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+","+1+")"
 timer=setInterval(function(){
 cx.clearRect(m-rr,n-rr,rr*2,rr*2)
 rr-=2;
