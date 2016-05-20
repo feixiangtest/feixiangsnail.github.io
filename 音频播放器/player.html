@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .container {
+            width: 550px;
+            height: 500px;
+            background: white;
+            margin: auto;
+            border-radius: 10px;
+        }
+        .left {
+            float: left;
+            background: black;
+        }
+        .right {
+            float: right;
+            background: #ccc;
+            width: 300px;
+            height: 500px;
+            position: relative;
+        }
+        .top {
+            width: 250px;
+            height: 250px;
+        }
+        .pic,
+        .intro {}
+        .pic {
+            width: 150px;
+            padding: 50px;
+            height: 150px;
+        }
+        @-webkit-keyframes pic {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            50% {
+                -webkit-transform: rotate(180deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        .bot {
+            background: #999;
+            color: yellow;
+            width: 250px;
+            height: 250px;
+            position: relative;
+        }
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 75px;
+        }
+        .tit {
+            height: 50px;
+            line-height: 50px;
+            width: 250px;
+            text-align: center;
+        }
+        .but {
+            height: 50px;
+            width: 250px;
+        }
+        h3 {
+            float: left;
+            width: 16px;
+            height: 16px;
+            margin-top: 15px;
+            margin-left: 30px;
+        }
+        .ru {
+            margin-top: 50px;
+        }
+        .gq {
+            float: left;
+        }
+        .gs {
+            float: right;
+        }
+        li {
+            display: block;
+            height: 30px;
+            width: 100%;
+            line-height: 30px;
+        }
+        .close {
+             width:20px;height:20px;
+           background:yellow;
+            float: right;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            color: purple;
+        }
+        .zk {
+            width:20px;height:20px;
+         background:yellow;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            display: none;
+            color: purple;
+        }
+        .zk:hover {
+            background: red;
+        }
+        .close:hover {
+            background: red;
+        }
+        li {
+            cursor: pointer;
+        }
+        .range,.range2,.tim {margin-top:10px;
+	margin-left:25px;
+} 
+    </style>
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="js/playlist.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="top">
+                <div class="pic">
+                    <img src="img/1.jpg" alt="">
+                </div>
+            </div>
+            <div class="bot">
+                <div class="intro">
+                    <div class="tit">
+                    </div>
+                    <div class="but">
+                        <audio src="music/chenparty%20dj.mp3" class="music">
+                        </audio>
+                        <h3></h3>
+                        <h3></h3>
+                        <h3></h3>
+                        <h3></h3>
+                        <input type="range" class="range" min="0" max="1" step="0.01" value="音量">
+                        <span>音量</span>
+                        <input type="range" class="range2" min="0" max="1" step="0.01"><span>进度</span>
+                        <br/>
+                        <span class="tim"></span>/
+                        <span class="lasttime"></span>
+                    </div>
+                </div>
+                <div class="zk">
+                   口
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="close">
+                X
+            </div>
+            <ul class="ru">
+                <li><span class="gq">歌曲</span><span class="gs">歌手</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        var key = true;
+        var key2 = true;
+        $(".range2").val(0);
+        $(".tim").html("00:00")
+        $(".lasttime").html("00:00")
+        for (var i = 0; i < 4; i++) {
+            $(".but>h3").eq(i).css("background", "url(img/a" + (i + 1) + ".jpg)")
+            $(".but>h3").eq(i).hover(function () {
+                $(this).css("opacity", "0.5")
+            }, function () {
+                $(this).css("opacity", "1")
+            })
+        }
+//        $.get("playlist.json", function (res) {
+            var l = "";
+            for (var j = 0; j < res.length; j++) {
+                l += '<li><span class="gq">' + res[j].title + '</span><span class="gs">' + res[j].artist + '</span></li>'
+            }
+            $(".ru").append(l);
+            var n = 0;
+            $(".tit").html(res[n].title+"--"+res[n].album)
+            $(".pic>img").attr("src", res[n].img)
+            $(".music").attr("src", res[n].mp3)
+            $(".but>h3").eq(0).click(function () {
+                clearInterval(timer);
+                fn();
+                n--;
+                if (n < 0) {
+                    n = 2;
+                }
+                $(".ru>li").eq(n + 1).css("background", "red").siblings().css("background", "")
+                $(".tit").html(res[n].title+"--"+res[n].album)
+                $(".pic>img").attr("src", res[n].img)
+                $(".music").attr("src", res[n].mp3)
+                $(".but>h3").eq(1).css("background", "url(img/b3.jpg)")
+                $(".music")[0].play();
+                key = false;
+            })
+            $(".but>h3").eq(2).click(function () {
+                clearInterval(timer);
+                fn();
+                n++;
+                if (n > 2) {
+                    n = 0;
+                }
+                $(".ru>li").eq(n + 1).css("background", "red").siblings().css("background", "")
+                $(".tit").html(res[n].title+"--"+res[n].album)
+                $(".pic>img").attr("src", res[n].img)
+                $(".music").attr("src", res[n].mp3)
+                $(".but>h3").eq(1).css("background", "url(img/b3.jpg)")
+                $(".music")[0].play();
+                key = false;
+            })
+            $(".but>h3").eq(1).click(function () {
+                if (key == true) {
+                    $(this).css("background", "url(img/b3.jpg)")
+                    $(".music")[0].play();
+                    $(".ru>li").eq(n + 1).css("background", "red").siblings().css("background", "")
+                    fn();
+                    key = false;
+                } else {
+                    $(".pic").css({
+                        "-webkit-animation": "pause"
+                    })
+                    clearInterval(timer);
+                    $(this).css("background", "url(img/a2.jpg)")
+                    $(".music")[0].pause();
+                    key = true;
+                }
+            })
+            var v;
+            $(".but>h3").eq(3).click(function () {
+                
+                if (key2 == true) {
+                    $(this).css("background", "url(img/b4.jpg)")
+                    $(".music")[0].muted = true;
+                    $(".range").val(0)
+                    key2 = false;
+                } else {
+                    $(this).css("background", "url(img/a4.jpg)")
+                    $(".music")[0].muted = false;
+                    $(".range").val(v)
+                    key2 = true;
+                }
+            })
+            $(".range").on("change", function () {
+                $(".music")[0].volume = $(this).val();
+                v=$(this).val();
+            })
+            var timer;
+            function fn() {
+                $(".pic").css({
+                    "-webkit-animation": "pic 30s linear infinite"
+                })
+                timer = setInterval(function () {
+                    $(".range2").val($(".music")[0].currentTime / $(".music")[0].duration);
+                    sc(parseInt($(".music")[0].duration), $(".lasttime"))
+                    sc(parseInt($(".music")[0].currentTime), $(".tim"))
+                    if ($(".music")[0].currentTime == $(".music")[0].duration) {
+                        $(".but>h3").eq(1).css("background", "url(img/a2.jpg)")
+                        $(".music")[0].pause();
+                        key = true;
+                        $(".range2").val(0);
+                        n++;
+                        if (n > 2) {
+                            n = 0;
+                        }
+                        $(".tit").html(res[n].title)
+                        $(".pic>img").attr("src", res[n].img)
+                        $(".music").attr("src", res[n].mp3)
+                        $(".but>h3").eq(1).css("background", "url(img/b3.jpg)")
+                        $(".music")[0].play();
+                        key = false;
+                    }
+                }, 1000)
+            }
+            $(".range2").on("change", function () {
+                clearInterval(timer);
+                $(".music")[0].currentTime = $(this).val() / 1 * $(".music")[0].duration;
+                $(".range2").val($(".music")[0].currentTime / $(".music")[0].duration)
+                $(".but>h3").eq(1).css("background", "url(img/b3.jpg)")
+                $(".music")[0].play();
+                fn();
+                key = false;
+            })
+            for (var m = 1; m < $(".ru>li").length; m++) {
+                $(".ru>li").eq(m).click(function () {
+                    clearInterval(timer);
+                    fn();
+                    n = $(this).index() - 1;
+                    $(".ru>li").eq(n + 1).css("background", "red").siblings().css("background", "")
+                    $(".tit").html(res[n].title+"--"+res[n].album)
+                    $(".pic>img").attr("src", res[n].img)
+                    $(".music").attr("src", res[n].mp3)
+                    $(".but>h3").eq(1).css("background", "url(img/b3.jpg)")
+                    $(".music")[0].play();
+                    key = false;
+                    console.log($(this).index());
+                })
+            }
+//        })
+        $(".close").click(function () {
+            $(".right").hide();
+            $(".zk").show();
+        })
+        $(".zk").click(function () {
+            $(this).hide();
+            $(".right").show();
+        })
+        function sc(time, obj) {
+            var y = parseInt(time);
+            var a, b;
+            a = y % 60;
+            if (a < 10) {
+                s = "0" + a;
+            } else {
+                s = a
+            }
+            b = Math.floor(y / 60);
+            if (b < 10) {
+                c = "0" + b;
+            } else {
+                c = b;
+            }
+            obj.html(c + ":" + s)
+        }
+    })
+</script>
+</html>
