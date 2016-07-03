@@ -1,0 +1,27 @@
+<ion-view view-title="作品">
+  <ion-content has-bouncing='true'>
+    <div class="list">
+
+    <a class="item item-thumbnail-left" ng-repeat="project in projects" type="item-text-wrap" href="#/tab/project/{{project.id}}">
+      <img ng-src="{{project.face}}">
+      <h2>{{project.name}}</h2>
+      <p>{{project.lastText}} </p>
+
+    </a>
+
+   
+<!-- <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="project in projects" type="item-text-wrap" href="#/tab/project/{{project.id}}">
+        <img ng-src="{{project.face}}">
+        <h2>{{project.name}}</h2>
+        <p>{{project.lastText}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(project)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list> -->
+</div>
+  </ion-content>
+</ion-view>

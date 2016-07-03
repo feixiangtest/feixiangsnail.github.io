@@ -1,0 +1,115 @@
+/* Empty. Add your own CSS if you like */
+
+@import"./animate.min.css";
+body {
+    cursor: url('http://ionicframework.com/img/finger.png'), auto;
+}
+
+
+/*.slider {
+  height: 100%;
+}*/
+
+.slider-slide {
+    color: #000;
+    background-color: #fff;
+    text-align: center;
+    font-weight: 300;
+}
+
+.box {
+    height: 200px;
+}
+
+.box img {
+    width: 100%;
+    height: 100%;
+}
+
+.character {
+    font-size: 15px;
+}
+
+#logo {
+    margin-top: 20%;
+}
+
+.slider-pager {
+    margin-top: 70%;
+}
+
+.myphoto {
+    margin-top: 10%;
+}
+
+.myprojectshow {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20%;
+    justify-content: space-around;
+}
+.myprojectshow>li{width:26%;height:100px;margin-bottom:30px;}
+.myprojectshow>li>img{width:100%;height:100%;}
+.tabs{background:#ffd700;}
+
+
+
+
+
+
+
+.platform-android .action-sheet-backdrop.active {
+background-color: rgba(0, 0, 0, 0.2);
+}
+.platform-android .action-sheet {
+margin-left: 8px;
+margin-right: 8px;
+width: auto;
+z-index: 11;
+overflow: hidden;
+}
+.platform-android .action-sheet .action-sheet-title,
+.platform-android .action-sheet .button {
+display: block;
+padding: 1px;
+width: 100%;
+border-radius: 0;
+border-color: #d1d3d6;
+background-color: transparent;
+color: #007aff;
+font-size: 16px;
+text-align: center;
+}
+.platform-android .action-sheet .action-sheet-title {
+padding: 16px;
+color: #8f8f8f;
+text-align: center;
+font-size: 16px;
+}
+.platform-android .action-sheet .button.active,
+.platform-android .action-sheet .button.activated {
+background: #e8e8e8;
+}
+.platform-android .action-sheet-group {
+margin-bottom: 8px;
+border-radius: 4px;
+background-color: #fff;
+overflow: hidden;
+}
+.platform-android .action-sheet-group .button {
+border-width: 1px 0 0;
+}
+.platform-android .action-sheet .button {
+display: block;
+padding: 1px;
+width: 100%;
+border-radius: 0;
+border-color: #d1d3d6;
+background-color: transparent;
+color: #007aff;
+font-size: 16px;
+}
+.platform-android .action-sheet-cancel {
+font-weight: 500;
+display: block;
+}
