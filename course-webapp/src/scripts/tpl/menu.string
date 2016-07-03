@@ -1,0 +1,12 @@
+<div class="m-menu">
+  <header>
+    <img src="/course-webapp/images/phone.png">
+  </header>
+  <h2>我是足球达人</h2>
+  <h3>我是足球达人，时刻关注足球动态</h3>
+  <ul>
+    <li action-type="goto.home" data-tag="live">足球头条</li>
+    <li action-type="goto.home" data-tag="life">足球圈子</li>
+    <li action-type="goto.home" data-tag="beauty">足球装备</li>
+  </ul>
+</div>

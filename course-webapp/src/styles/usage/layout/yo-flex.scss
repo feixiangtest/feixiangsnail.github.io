@@ -1,0 +1,34 @@
+@charset "utf-8";
+@import "../../lib/layout/yo-flex";
+
+/**
+ * yo-flex扩展
+ */
+
+@include yo-flex {
+    // 优化Demo在浏览器中查看的滚动体验
+    // Yo框架内部已移除此规则，防止某些版本的iOS webview崩溃
+    > .flex,
+    .flex-inherit > .flex {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+// Config
+// 定制 qapp 样式
+spa-app {
+    position: absolute;
+    overflow: hidden;
+}
+
+spa-view {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: #eceef0 !important;
+    @include flexbox(flex);
+    @include flex-direction(column);
+}

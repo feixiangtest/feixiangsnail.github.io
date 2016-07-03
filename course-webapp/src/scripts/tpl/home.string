@@ -1,0 +1,142 @@
+<header>
+  <div class="menu yo-ico" action-type="tap.menu">&#xe745;</div>
+  <ul>
+    <li class="active" action-type="switch.home">热点</li>
+    <li action-type="switch.home">关注</li>
+  </ul>
+  <div class="scan yo-ico" action-type="scan">&#xe684;</div>
+</header>
+<div class="swiper-container" id="home-swiper">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <nav>
+            <ul id="home-hot-nav">
+              <li class="active" action-type="switch.homehot">足球头条</li>
+              <li action-type="switch.homehot">足球圈子</li>
+              <li action-type="switch.homehot">足球装备</li>
+            </ul>
+          </nav>
+          <div class="swiper-container" id="home-hot-swiper">
+              <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <section id="liveScroll">
+                      <div>
+                        <div class="head">
+                            <img src="/course-webapp/images/arrow.png"/>
+                            <span>下拉刷新...</span>
+                        </div>
+                        <ul ms-repeat="livelist">
+                          <li>
+                            <i><img ms-src="el[0].img"></i>
+                            <b ms-text="el[0].title"></b>
+                          </li>
+                          <li></li>
+                          <li ms-class-none-border="!el[1]">
+                            <i><img ms-src="el[1].img"></i>
+                            <b ms-class-none-border="!el[1]" ms-text="el[1].title"></b>
+                          </li>
+                        </ul>
+                        <div class="foot">
+                            <img src="/course-webapp/images/arrow.png"/>
+                            <span>上拉加载更多...</span>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                  <div class="swiper-slide" id="lifescroll">
+                    <section id="waterfall"></section>
+                  </div>
+                  <div class="swiper-slide">
+                    <section id="css3waterfall" spa-widget="scroll">
+                      <div class="cont">
+            						<div class="pic">
+            							<div ms-repeat-item="beautylist">
+            								<span>
+            									<img ms-src="item.img" />
+            									<i ms-html="item.title"></i>
+            								</span>
+            							</div>
+            						</div>
+            					</div>
+                    </section>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="swiper-slide home-focus" spa-widget="scroll" data-scroll-id="homeFocus">
+          <section ms-visible="!showLoading">
+            <div>
+              <ul>
+                <li>
+                  <img src="/course-webapp/images/Pikachu.jpg" />
+                </li>
+                <li class="zan">
+                  <h2>我是足球达人</h2>
+                  <p>我是足球达人，时刻关注足球动态</p>
+                  <ul>
+                    <li ms-html="zan[0]"></li>
+                    <li class="yo-ico" ms-attr-data-index="0" action-type="tap.dianzan">&#xe609;</li>
+                  </ul>
+                </li>
+              </ul>
+              <img src="/course-webapp/images/zuqiuquan2.jpg">
+              <p>足球美丽的时刻</p>
+            </div>
+            <div>
+              <ul id="dockMenu">
+                <li>
+                  <img src="/course-webapp/images/Pikachu.jpg" />
+                </li>
+                <li class="zan">
+                  <h2>我是足球达人</h2>
+                  <p>我是足球达人，时刻关注足球动态</p>
+                  <ul>
+                    <li ms-html="zan[1]"></li>
+                    <li class="yo-ico" ms-attr-data-index="1" action-type="tap.dianzan">&#xe609;</li>
+                  </ul>
+                </li>
+              </ul>
+              <img src="/course-webapp/images/zuqiuquan2.jpg">
+              <p>足球美丽的时刻</p>
+            </div>
+            <div>
+              <ul>
+                <li>
+                  <img src="/course-webapp/images/Pikachu.jpg" />
+                </li>
+                <li class="zan">
+                 <h2>我是足球达人</h2>
+                  <p>我是足球达人，时刻关注足球动态</p>
+                  <ul>
+                    <li ms-html="zan[2]"></li>
+                    <li class="yo-ico" ms-attr-data-index="2" action-type="tap.dianzan">&#xe609;</li>
+                  </ul>
+                </li>
+              </ul>
+              <img src="/course-webapp/images/zuqiuquan2.jpg">
+              <p>足球美丽的时刻</p>
+            </div>
+            <div>
+              <ul>
+                <li>
+                  <img src="/course-webapp/images/Pikachu.jpg" />
+                </li>
+                <li class="zan">
+                  <h2>我是足球达人</h2>
+                  <p>我是足球达人，时刻关注足球动态</p>
+                  <ul>
+                    <li ms-html="zan[3]"></li>
+                    <li class="yo-ico" ms-attr-data-index="3" action-type="tap.dianzan">&#xe609;</li>
+                  </ul>
+                </li>
+              </ul>
+              <img src="/course-webapp/images/zuqiuquan2.jpg">
+               <p>足球美丽的时刻</p>
+            </div>
+          </section>
+          <div class="yo-loading" ms-if="showLoading">
+              <div class="inner"><i class="yo-ico"></i><span>加载中...</span></div>
+          </div>
+        </div>
+    </div>
+</div>
