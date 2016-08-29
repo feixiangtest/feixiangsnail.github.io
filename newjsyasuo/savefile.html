@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jszip2</title>
+	<script src="js/jszip.min.js"></script>
+	<script src="js/FileSaver.js"></script>
+	<script src="js/jsutil.js"></script>
+	<script src="js/pako.min.js"></script>
+	<script>
+
+//通过路径获取文件数据（data)
+JSZipUtils.getBinaryContent('bufferdata/3.mdlh', function(err, data) {
+    if(err) {
+        throw err; 
+    }
+   
+//将获取到的Arraybuffer数据用Uint8来读取。
+var arrdata=new Uint8Array(data)
+
+    
+
+
+//调用下面的获取块文件名的方法，返回一个数组。
+var myFileName=findFileName(arrdata,6)
+// 将这个数组读取出来，放到另一个数组s1里面。
+var s1=[];
+for(var j=0;j<myFileName.length;j++){
+s1[j]=""
+
+for(var i=0;i<myFileName[j].length;i++){
+	if(myFileName[j][i]==0){
+		break;
+		
+	}
+	s1[j]+=(String.fromCharCode(myFileName[j][i]))
+
+
+}
+}
+// console.log(s1)//文件头名称。
+//读取块信息存入一个二维数组k里面。其中包括了6个一位数组，每个一位数组为一个块，一维数组里面包含了偏移，文件大小等信息。
+var k=blockInfo(arrdata,6)
+console.log(k)
+//定义一个数组b，里面装blob文件，将每个块的字节流内容放入b里面，6个块也就是六个元素。
+var b=[];
+for(var i=0;i<k.length;i++){
+if(k[i][2]){
+b[i]=new Blob([arrdata.slice(k[i][0],(k[i][0]+k[i][2]))])
+}
+else{
+b[i]=new Blob([arrdata.slice(k[i][0],(k[i][0]+k[i][1]))])
+}
+}
+
+logBlobText2(b[5])
+
+//将对应的块字节流用DataUrl来读取。
+function logBlobText2(z){
+	var reader=new FileReader();
+	reader.readAsDataURL(z);
+	reader.onload=function(e){
+
+		myimg.setAttribute("src",e.target.result)
+		
+		
+	
+
+	}
+}
+// console.log(b[5])
+//将第script压缩块截取出来。
+var scr=arrdata.slice(k[1][0],(k[1][0]+k[1][2]))
+// //用pako解压此压缩块
+    var result = pako.inflate(scr, { to: 'string' });
+ console.log(result);
+
+
+var meshdata=arrdata.slice(k[0][0],(k[0][0]+k[0][1]))
+// console.log(meshdata)
+
+var lumpName=meshdata.slice(4,68)
+// console.log(lumpName)
+var lum="";
+// for(var i=0;i<lumpName.length;i++){
+	
+// 	lum[i]+=(String.fromCharCode(lumpName[i])
+
+
+// }
+for(var i=0;i<lumpName.length;i++){
+	lum+=(String.fromCharCode(lumpName[i]))
+}
+
+// console.log(lum)
+
+// var ys1=[0,0,0,68]//68偏移
+// console.log(tentosixteen(ys1))
+// var ys1a=[0,0,6,134]//1670第一个压缩文件长度
+// console.log(tentosixteen(ys1a))
+// var ys1b=[0,0,20,106]//5226第一个文件解压后长度。
+// console.log(tentosixteen(ys1b))
+// var ys2=[0,0,6,218]//1754偏移==68+16+1670
+// console.log(tentosixteen(ys2))
+// var ys2a=[0,0,19,86]//4950第二个压缩文件长度 
+// console.log(tentosixteen(ys2a))
+// var ys3=[0,0,26,64]//6720偏移==1754+16+4950
+// console.log(tentosixteen(ys3))
+// var ys3a=[0,1,37,136]//75144第三个压缩文件长度
+// console.log(tentosixteen(ys3a))
+// var ys4=[0,1,63,216]//81880偏移
+// console.log(tentosixteen(ys4))
+// var ys4a=[0,0,1,172]//428，第四个压缩文件长度
+// console.log(tentosixteen(ys4a))
+//第一个压缩文件类型数组
+var lum1=meshdata.slice((68+16),(68+16+1670))
+
+// console.log(lum1)
+//第二个压缩文件
+var lum2=meshdata.slice((68+16+1670+16),(1754+16+4950))
+
+// console.log(lum2)
+//第三个压缩文件
+var lum3=meshdata.slice((1754+16+4950+16),(6720+16+75144))
+
+// console.log(lum3)
+//第四个压缩文件
+var lum4=meshdata.slice(6720+16+75144+16)
+
+// console.log(lum4)
+//注意，用pako解压的时候一定要是压缩的那部分数组，多一个元素都会报错。所以说要把文件的头部16个字节的解释性文件要剔除才能解压。
+var meshblock1 = pako.inflate(lum1, { to: 'ArrayBuffer' });
+// console.log(meshblock1)
+// var meshblock1 = pako.inflate(lum1, { to: 'string' });
+// console.log(meshblock1)
+
+var meshblock2 = pako.inflate(lum2, { to: 'ArrayBuffer' });
+// console.log(meshblock2)
+var meshblock3 = pako.inflate(lum3, { to: 'ArrayBuffer' });
+// console.log(meshblock3)
+var meshblock4 = pako.inflate(lum4, { to: 'ArrayBuffer' });
+console.log(meshblock4)
+
+// var ys1 = [0, 0, 26, 146] 
+// console.log(tentosixteen(ys1))
+
+
+//由于第四块比较小，所以先做第四块的3d模型。
+// var meshblock4name=meshblock4.slice(4,42);
+// console.log(meshblock4name);
+//索引
+var meshblock4index=meshblock4.slice(46,166);
+// console.log(meshblock4index);
+//顶点
+var meshblock4vextex=meshblock4.slice(170,410);
+console.log(meshblock4vextex);
+//纹理1
+var meshblock4texcoord=meshblock4.slice(414,574);
+// console.log(meshblock4texcoord);
+//纹理2
+var meshblock4texcoord2=meshblock4.slice(574,734);
+// console.log(meshblock4texcoord2)
+//法向量
+var meshblock4Attr=meshblock4.slice(738,978)
+// console.log(meshblock4Attr)
+//索引
+var af=tentosixteensz(meshblock4index);
+//顶点
+var av=tentosixteenstring(meshblock4vextex);
+//纹理1
+var avt1=tentosixteenstring(meshblock4texcoord);
+//纹理2
+var avt2=tentosixteensz(meshblock4texcoord2)
+//法向量
+var avn=tentosixteensz(meshblock4Attr)
+console.log(af)
+console.log(av);
+console.log(avt1);
+console.log(avt2);
+console.log(avn);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var downmesh=document.getElementById('downmesh')
+downmesh.onclick=function (){
+
+	var z=new JSZip();
+
+
+
+	z.file("mesh1.txt",meshblock1,{binary:true});
+	z.file("mesh2.txt",meshblock2,{binary:true});
+	z.file("mesh3.txt",meshblock3,{binary:true});
+	z.file("mesh4.txt",meshblock4,{binary:true});
+	z.generateAsync({type:"blob"}).then(function(blob){
+			saveAs(blob,"mesh.zip")
+		})
+
+}
+
+
+
+
+
+
+
+
+function findFileName(arr,n){
+	
+	
+	var a=[];
+	
+	for(var i=0;i<n;i++){
+		
+	
+		a[i]=arr.slice(-1*n*80-4).slice((i*80)+16,(i+1)*80) 
+		
+		
+	}
+return a;
+}
+
+
+
+
+function blockInfo(arr,n){
+	var o=[];
+	
+	var a=[];
+	var p=[]
+	for(var i=0;i<n;i++){
+		o[i]=[];
+	
+		a[i]=arr.slice(-1*n*80-4).slice((i*80),(i+1)*80) 
+		for(var j=0;j<4;j++){
+			
+			p=a[i].slice(j*4,(j+1)*4).reverse();
+			o[i][j]=tentosixteen(p)
+			
+		}
+		
+		
+	}
+return o;
+}
+
+//返回一个数字
+	function tentosixteen(a){
+	var x=[];var y="";var z;
+for(var i=0;i<4;i++){
+	if(a[i]<16){
+x.push("0"+a[i].toString(16))
+	}
+	else{
+		x.push(a[i].toString(16))
+	}
+y+=x[i]
+}
+z=parseInt(y,16)
+return z;
+}
+
+
+
+//将一个数组a，每n个字节转化为一个十六进制数，再转化过来。
+// 	function perntentosixteen(a,n){
+// 	var y="", z=[];
+// for(var i=0;i<a.length;i++){
+// 	if(a[i]<16){
+// y="0"+a[i].toString(16)+y;
+// 	}
+// 	else{
+// 		y=a[i].toString(16)+y;
+// 	}
+
+// if((i+1)%n==0)
+// {
+// z.push(parseInt(y,16));
+// y="";
+// }
+
+// }
+
+// return z;
+// }
+
+//返回一个数组。
+	function tentosixteensz(a){
+	var y="", z=[];
+for(var i=0;i<a.length;i++){
+	if(a[i]<16){
+y="0"+a[i].toString(16)+y;
+	}
+	else{
+		y=a[i].toString(16)+y;
+	}
+
+if((i+1)%4==0)
+{
+z.push(parseInt(y,16));
+y="";
+}
+
+}
+
+return z;
+}
+
+
+
+	function tentosixteenstring(a){
+	var y="", z=[];
+for(var i=0;i<a.length;i++){
+	if(a[i]<16){
+y="0"+a[i].toString(16)+y;
+	}
+	else{
+		y=a[i].toString(16)+y;
+	}
+
+if((i+1)%4==0)
+{
+z.push(y);
+y="";
+}
+
+}
+
+return z;
+}
+
+
+
+
+
+
+
+
+
+
+
+ //创建文件，引用jszip才行。
+// var z=new JSZip();
+// z.file("2.srcipt",data,{binary:true});
+// z.generateAsync({type:"blob"}).then(function(blob){
+// 			saveAs(blob,"t.zip")
+// 		})
+
+
+});
+
+		
+	</script>
+</head>
+<body>
+	<img src="" alt="" id="myimg">
+	<button id="downmesh">点我下载</button>
+
+</body>
+</html>
