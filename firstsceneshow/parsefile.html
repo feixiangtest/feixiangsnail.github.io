@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jszip2</title>
+    <style>
+    body {
+        overflow: hidden;
+    }
+    </style>
+    <script src="js/jszip.min.js"></script>
+    <script src="js/FileSaver.js"></script>
+    <script src="js/jsutil.js"></script>
+    <script src="js/pako.min.js"></script>
+    <script src="js/three.js"></script>
+    <script type="text/javascript" src="js/TrackballControls.js"></script>
+</head>
+<body>
+</body>
+<script>
+//通过路径获取文件数据（data)
+JSZipUtils.getBinaryContent('bufferdata/3.mdlh', function(err, data) {
+    if (err) {
+        throw err;
+    }
+    //将获取到的Arraybuffer数据用Uint8来读取。
+    var arrdata = new Uint8Array(data)
+        //读取块信息存入一个二维数组k里面。其中包括了6个一位数组，每个一位数组为一个块，一维数组里面包含了偏移，文件大小等信息。块信息是在arrdata最后的数据中。
+    var k = blockInfo(arrdata, 6)
+        // console.log(k)
+        //定义一个数组b，里面装blob文件，将每个块的字节流内容放入b里面，6个块也就是六个元素。其实这里是为了用filereader读取后面四个图片文件。script和mesh文件并不需要blob装载。
+    var b = [];
+    for (var i = 0; i < k.length; i++) {
+        if (k[i][2]) {
+            b[i] = new Blob([arrdata.slice(k[i][0], (k[i][0] + k[i][2]))])
+        } else {
+            b[i] = new Blob([arrdata.slice(k[i][0], (k[i][0] + k[i][1]))])
+        }
+    }
+    //=================================读取图片文件,并显示在页面上。
+    //=================================================将第二块也就是script压缩块截取出来。==================================
+    var scr = arrdata.slice(k[1][0], (k[1][0] + k[1][2]))
+        //用pako解压此压缩块
+    var result = pako.inflate(scr, {
+        to: 'string'
+    });
+    // console.log(result);//script文件。
+    //将此script转化为json对象。
+    var parser = new DOMParser(); //解析器，将string转化为对象
+    var xml = parser.parseFromString(result, "text/xml"); //转化
+    var jsonobj = xmlToJson(xml); //调用并赋值
+    //==============================================将第一大块也就是mesh块截取出来，其中这个块又包含四个压缩块。
+    var meshdata = arrdata.slice(k[0][0], (k[0][0] + k[0][1]))
+        //获取mesh大文件名
+    var lumpName = meshdata.slice(4, 68)
+    var lum = "";
+    for (var i = 0; i < lumpName.length; i++) {
+        lum += (String.fromCharCode(lumpName[i]))
+    }
+    //=======================================下面是四个压缩文件类型数组===========================================
+    var lum1 = meshdata.slice((68 + 16), (68 + 16 + 1670))
+    var lum2 = meshdata.slice((68 + 16 + 1670 + 16), (1754 + 16 + 4950))
+    var lum3 = meshdata.slice((1754 + 16 + 4950 + 16), (6720 + 16 + 75144))
+    var lum4 = meshdata.slice(6720 + 16 + 75144 + 16)
+        //注意，用pako解压的时候一定要是压缩的那部分数组，多一个元素都会报错。所以说要把文件的头部16个字节的解释性文件要剔除才能解压。下面是解压后的4个mesh文件。
+    var meshblock1 = pako.inflate(lum1, {
+        to: 'ArrayBuffer'
+    });
+    var meshblock2 = pako.inflate(lum2, {
+        to: 'ArrayBuffer'
+    });
+    var meshblock3 = pako.inflate(lum3, {
+        to: 'ArrayBuffer'
+    });
+    var meshblock4 = pako.inflate(lum4, {
+        to: 'ArrayBuffer'
+    });
+    //定义一个对象，将mesh信息都放入对象中。
+    var meshobj = {};
+    var meshobj1 = {};
+    var meshobj2 = {};
+    var meshobj3 = {};
+    var meshobj4 = {};
+    //===============================mesh1索引，顶点，纹理，向量==============================
+    meshobj1.indices = tentosixteensz(meshblock1.slice(46, 574))
+    meshobj1.vextex = hextofloatsz(meshblock1.slice(578, 1970))
+    meshobj1.tex1 = hextofloatsz(meshblock1.slice(1974, 2902))
+    meshobj1.tex2 = hextofloatsz(meshblock1.slice(2902, 3830))
+    meshobj1.normals = hextofloatsz(meshblock1.slice(3834, 5226))
+    meshobj1.diffusetexture = b[2]
+        //===============================mesh2索引，顶点，纹理，向量==============================
+    meshobj2.indices = tentosixteensz(meshblock2.slice(46, 2014))
+    meshobj2.vextex = hextofloatsz(meshblock2.slice(2018, 5978))
+    meshobj2.tex1 = hextofloatsz(meshblock2.slice(5982, 8622))
+    meshobj2.tex2 = hextofloatsz(meshblock2.slice(8622, 11262))
+    meshobj2.normals = hextofloatsz(meshblock2.slice(11266, 15226))
+    meshobj2.diffusetexture = b[3]
+        //===============================mesh3索引，顶点，纹理，向量==============================
+    meshobj3.indices = tentosixteensz(meshblock3.slice(46, 34486))
+    meshobj3.vextex = hextofloatsz(meshblock3.slice(34490, 116114))
+    meshobj3.tex1 = hextofloatsz(meshblock3.slice(116118, 170534))
+    meshobj3.tex2 = hextofloatsz(meshblock3.slice(170534, 224950))
+    meshobj3.normals = hextofloatsz(meshblock3.slice(224954, 306578))
+    meshobj3.diffusetexture = b[4]
+        //===============================mesh4索引，顶点，纹理，向量==============================
+    meshobj4.indices = tentosixteensz(meshblock4.slice(46, 166))
+    meshobj4.vextex = hextofloatsz(meshblock4.slice(170, 410))
+    meshobj4.tex1 = hextofloatsz(meshblock4.slice(414, 574))
+    meshobj4.tex2 = hextofloatsz(meshblock4.slice(574, 734))
+    meshobj4.normals = hextofloatsz(meshblock4.slice(738, 978))
+    meshobj4.diffusetexture = b[5]
+        //===========================将3.mdlh文件的所有数据都添加到meshobj对象中==========================
+    meshobj.meshobj1 = meshobj1;
+    meshobj.meshobj2 = meshobj2;
+    meshobj.meshobj3 = meshobj3;
+    meshobj.meshobj4 = meshobj4;
+    meshobj.jsonobj = jsonobj;
+    console.log(meshobj)
+        //============================================THREEJS加载=======================================
+    var camera, scene, renderer,step=1;
+   
+    
+    var clock = new THREE.Clock();
+        renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setClearColor(0xeeeeee)
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+        document.body.appendChild(renderer.domElement);
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 2)
+        scene = new THREE.Scene();
+        camera.lookAt(scene.position)
+
+ var trackballControls = new THREE.TrackballControls(camera);
+
+        trackballControls.rotateSpeed = 1.0;
+        trackballControls.zoomSpeed = 1.0;
+        trackballControls.panSpeed = 1.0;
+
+        
+        //  var ambientLight = new THREE.AmbientLight(0x383838);
+        // scene.add(ambientLight);
+
+        // // add spotlight for the shadows
+        // var spotLight = new THREE.SpotLight(0xffffff);
+        // spotLight.position.set(3, 3, 3);
+        // spotLight.intensity = 1;
+        // scene.add(spotLight);
+
+       var ground = new THREE.PlaneGeometry(20, 20, 50, 50);
+        var groundMaterial=new THREE.MeshBasicMaterial({color:0x999900})
+        var groundMesh = new THREE.Mesh(ground,groundMaterial)
+         groundMesh.receiveShadow = true;
+        groundMesh.rotation.x = -0.5 * Math.PI;
+        groundMesh.position.set(0,-0.27,-5)
+        scene.add(groundMesh);
+
+     
+
+
+      
+
+
+
+
+
+
+
+
+        var group1 = new THREE.Group();
+        group1.position.set(0,0.3,0)
+        group1.rotation.set(0.5*Math.PI,Math.PI,1.1*Math.PI)
+        group1.castShadow = true;
+        scene.add(group1)
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+        var mesh1 = creatMeshs(meshobj.meshobj1.indices, meshobj.meshobj1.vextex, meshobj.meshobj1.tex1, meshobj.meshobj1.diffusetexture)
+        var mesh2 = creatMeshs(meshobj.meshobj2.indices, meshobj.meshobj2.vextex, meshobj.meshobj2.tex1, meshobj.meshobj2.diffusetexture)
+        var mesh3 = creatMeshs(meshobj.meshobj3.indices, meshobj.meshobj3.vextex, meshobj.meshobj3.tex1, meshobj.meshobj3.diffusetexture)
+        var mesh4 = creatMeshs(meshobj.meshobj4.indices, meshobj.meshobj4.vextex, meshobj.meshobj4.tex1, meshobj.meshobj4.diffusetexture)
+
+
+
+        window.addEventListener('resize', onWindowResize, false);
+    
+
+        function creatMeshs(indicesarr, verticesarr, texarr, blobpic) {
+            var geometry = new THREE.Geometry();
+            var vertices = []
+            for (var i = 0; i < verticesarr.length; i++) {
+                vertices.push(new THREE.Vector3(verticesarr[i++], verticesarr[i++], verticesarr[i]))
+            }
+            var faces = []
+            for (var i = 0; i < indicesarr.length; i++) {
+                faces.push(new THREE.Face3(indicesarr[i++], indicesarr[i++], indicesarr[i]))
+            }
+            geometry.vertices = vertices;
+            geometry.faces = faces;
+            geometry.faceVertexUvs[0] = [];
+            for (var i = 0; i < faces.length; i++) {
+                geometry.faceVertexUvs[0].push([
+                    new THREE.Vector2(texarr[faces[i].a * 2], texarr[faces[i].a * 2 + 1]),
+                    new THREE.Vector2(texarr[faces[i].b * 2], texarr[faces[i].b * 2 + 1]),
+                    new THREE.Vector2(texarr[faces[i].c * 2], texarr[faces[i].c * 2 + 1])
+                ]);
+            }
+            geometry.uvsNeedUpdate = true;
+            var reader = new FileReader();
+            reader.readAsDataURL(blobpic);
+            reader.onload = function(e) {
+                var texture = THREE.ImageUtils.loadTexture(e.target.result, null, function(t) {});
+                var material = new THREE.MeshBasicMaterial({
+                    map: texture
+                });
+                var mesh = new THREE.Mesh(geometry, material);
+                group1.add(mesh);
+                return mesh;
+            }
+        }
+
+
+// document.onmousewheel=function(ev){
+//     step+=ev.wheelDelta/1200
+//     if(step<=0.1){
+//       step=0.1
+//     }
+//     else if(step>=3.0){
+//       step=3.0
+//     }
+   
+//   }
+
+
+
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    function animate() {
+
+                    var delta = clock.getDelta();
+
+           
+
+
+            trackballControls.update(delta);
+       
+        // group1.rotation.x+=0.001*Math.PI;
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+animate();
+
+
+
+
+    //===========================================================下面为封装的各种方法============================================================
+    //获取arr的最后面的数据信息。切割用的就是倒数484个字节。
+    function blockInfo(arr, n) {
+        var o = [];
+        var a = [];
+        var p = []
+        for (var i = 0; i < n; i++) {
+            o[i] = [];
+            a[i] = arr.slice(-1 * n * 80 - 4).slice((i * 80), (i + 1) * 80)
+            for (var j = 0; j < 4; j++) {
+                p = a[i].slice(j * 4, (j + 1) * 4).reverse();
+                o[i][j] = tentosixteen(p)
+            }
+        }
+        return o;
+    }
+    //将对应的块字节流用DataUrl来读取。
+    function logBlobText2(z, dom) {
+        var reader = new FileReader();
+        reader.readAsDataURL(z);
+        reader.onload = function(e) {
+            dom.src = e.target.result;
+        }
+    }
+    //将四个字节的十进制数据，先转化为16进制，然后拼接在转为10进制。因为4字节小端存储必须颠倒顺序之后解出原数据。下面的参数a是4个字节的。
+    function tentosixteen(a) {
+        var x = [];
+        var y = "";
+        var z;
+        for (var i = 0; i < 4; i++) {
+            if (a[i] < 16) {
+                x.push("0" + a[i].toString(16))
+            } else {
+                x.push(a[i].toString(16))
+            }
+            y += x[i]
+        }
+        z = parseInt(y, 16)
+        return z;
+    }
+    //同上，不过这次是返回一个数组。
+    function tentosixteensz(a) {
+        var y = "",
+            z = [];
+        for (var i = 0; i < a.length; i++) {
+            if (a[i] < 16) {
+                y = "0" + a[i].toString(16) + y;
+            } else {
+                y = a[i].toString(16) + y;
+            }
+            if ((i + 1) % 4 == 0) {
+                z.push(parseInt(y, 16));
+                y = "";
+            }
+        }
+        return z;
+    }
+    //将类型数组转为浮点数。步骤是先将4个十进制数转为一个十六进制数，然后再讲这个十六进制数转为浮点数。
+    function hextofloatsz(arr) {
+        var arr2 = tentosixteenstring(arr);
+        var o = []
+        for (var i = 0; i < arr2.length; i++) {
+            o.push(HexToSingle(arr2[i]))
+        }
+        return o;
+        function tentosixteenstring(a) {
+            var y = "",
+                z = [];
+            for (var i = 0; i < a.length; i++) {
+                if (a[i] < 16) {
+                    y = "0" + a[i].toString(16) + y;
+                } else {
+                    y = a[i].toString(16) + y;
+                }
+                if ((i + 1) % 4 == 0) {
+                    z.push(y);
+                    y = "";
+                }
+            }
+            return z;
+        }
+        function HexToSingle(t) {
+            t = t.replace(/\s+/g, "");
+            if (t == "") {
+                return "";
+            }
+            if (t == "00000000") {
+                return "0";
+            }
+            if ((t.length > 8) || (isNaN(parseInt(t, 16)))) {
+                return "Error";
+            }
+            if (t.length < 8) {
+                t = FillString(t, "0", 8, true);
+            }
+            t = parseInt(t, 16).toString(2);
+            t = FillString(t, "0", 32, true);
+            var s = t.substring(0, 1);
+            var e = t.substring(1, 9);
+            var m = t.substring(9);
+            e = parseInt(e, 2) - 127;
+            m = "1" + m;
+            if (e >= 0) {
+                m = m.substr(0, e + 1) + "." + m.substring(e + 1)
+            } else {
+                m = "0." + FillString(m, "0", m.length - e - 1, true)
+            }
+            if (m.indexOf(".") == -1) {
+                m = m + ".0";
+            }
+            var a = m.split(".");
+            var mi = parseInt(a[0], 2);
+            var mf = 0;
+            for (var i = 0; i < a[1].length; i++) {
+                mf += parseFloat(a[1].charAt(i)) * Math.pow(2, -(i + 1));
+            }
+            m = parseInt(mi) + parseFloat(mf);
+            if (s == 1) {
+                m = 0 - m;
+            }
+            return m;
+        }
+        function FillString(t, c, n, b) {
+            if ((t == "") || (c.length != 1) || (n <= t.length)) {
+                return t;
+            }
+            var l = t.length;
+            for (var i = 0; i < n - l; i++) {
+                if (b == true) {
+                    t = c + t;
+                } else {
+                    t += c;
+                }
+            }
+            return t;
+        }
+    }
+    //xml转json函数
+    function xmlToJson(xml) {
+        'use strict';
+        var obj = {};
+        if (xml.nodeType == 1) {
+            if (xml.attributes.length > 0) {
+                obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        } else if (xml.nodeType == 3) {
+            obj = xml.nodeValue;
+        }
+        if (xml.hasChildNodes()) {
+            for (var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof(obj[nodeName]) == "undefined") {
+                    obj[nodeName] = xmlToJson(item);
+                } else {
+                    if (typeof(obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(xmlToJson(item));
+                }
+            }
+        }
+        return obj;
+    };
+});
+</script>
+</html>
