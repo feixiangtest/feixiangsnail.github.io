@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+    <title>3D预览</title>
+     <script src="js/jszip.min.js"></script>
+    <script src="js/FileSaver.js"></script>
+   
+    <script src="js/pako.min.js"></script>
+    <script src="js/three.min.js"></script>
+    <script type="text/javascript" src="js/TrackballControls.js"></script>
+    <script src="js/MAX.js"></script>
+   
+   </head>
+
+<body>
+   
+</body>
+    <script>
+  function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+
+var url = getQueryString("url");
+
+
+
+
+var mymax = new MAX();
+mymax.load("6.mdlh")
+    </script>
+
+
+</html>
