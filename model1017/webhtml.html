@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>3D预览</title>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: green;
+    }
+    
+    #box {
+        width: 800px;
+        height: 800px;
+        margin: 30px auto 0;
+    }
+    
+    img {
+        width: 500px;
+        height: 500px;
+        margin-left: 100px;
+    }
+    
+    p {
+        text-align: center;
+        color: pink;
+        font-size: 30px;
+    }
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <img src="" alt="" id="img1">
+    <img src="" alt="" id="img2">
+    <img src="" alt="" id="img3">
+    <p>从做到右依次为diffuseMap，lightMap,specularMap</p>
+</body>
+<script src="js/main.js"></script>
+<script src="js/SceneExporter.js"></script>
+<script src="js/SceneLoader.js"></script>
+<script src="js/MAX.js"></script>
+<script>
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+var box = document.getElementById('box');
+var url = getQueryString("url");
+var camera, scene, renderer
+renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+renderer.setClearColor(0xeeeeee)
+renderer.setSize(box.clientWidth, box.clientHeight);
+renderer.shadowMapEnabled = true;
+box.appendChild(renderer.domElement);
+camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+camera.position.set(0, 0, 9)
+scene = new THREE.Scene();
+camera.lookAt(scene.position)
+var ground = new THREE.PlaneGeometry(20, 20, 50, 50);
+var groundMaterial = new THREE.MeshPhongMaterial({
+    color: 0xffffff
+})
+var groundMesh = new THREE.Mesh(ground, groundMaterial)
+groundMesh.receiveShadow = true;
+groundMesh.rotation.x = -0.5 * Math.PI;
+groundMesh.position.set(0, -0.27, -5)
+    // scene.add(groundMesh);
+var ambiColor = "#999999";
+var ambientLight = new THREE.AmbientLight(ambiColor);
+scene.add(ambientLight);
+var dirLight = new THREE.DirectionalLight(0xffffff);
+dirLight.position.set(-20, 30, 30)
+dirLight.castShadow = true;
+dirLight.intensity = 1;
+scene.add(dirLight)
+// var cubeGeom=new THREE.BoxGeometry(1,1,1);
+// var material=new THREE.MeshPhongMaterial({color:'yellow'})
+// var cube=new THREE.Mesh(cubeGeom,material)
+// scene.add(cube)
+var mymax = new THREE.MAX();
+
+var onProgress = function ( xhr ) {
+                if ( xhr.lengthComputable ) {
+                    var percentComplete = xhr.loaded / xhr.total * 100;
+                    console.log( Math.round(percentComplete, 2) + '% downloaded' );
+                }
+            };
+
+            var onError = function ( xhr ) {
+            };
+
+
+mymax.load("13.mdlh", function(group1) {
+    group1.position.set(0, 0, 0)
+    group1.rotation.set(0.5 * Math.PI, Math.PI, 1.1 * Math.PI)
+    group1.castShadow = true;
+    console.log(group1)
+        // var g=group1.toJSON();
+        // console.log(JSON.stringify(g))
+    scene.add(group1)
+},onProgress,onError)
+// var exporter = new THREE.SceneExporter();
+//     var sceneJson = JSON.stringify(exporter.parse(scene));
+//     localStorage.setItem('scene2', sceneJson);
+//     console.log(sceneJson)
+// var json = localStorage.getItem('scene2');
+//                 var sceneLoader = new THREE.SceneLoader();
+//                 sceneLoader.parse(JSON.parse(json), function (e) {
+//                     scene = e.scene;
+//                     console.log(scene)
+//                 }, '.');
+var trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
+var clock = new THREE.Clock();
+function animate() {
+    var delta = clock.getDelta();
+   
+    trackballControls.update(delta);
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+animate();
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(box.clientWidth, box.clientHeight);
+}
+</script>
+</html>
