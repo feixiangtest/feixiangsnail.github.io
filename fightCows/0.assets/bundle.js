@@ -695,16 +695,25 @@ var wxShare = {
         }
         console.log('微信接口调用成功');
         var that = this;
-        this.wx_get_appid(function (data) {
-            that.config.appId = data[0];
-            that.wx_get_access_token(function (data) {
-                that.access_token = data[0];
-                that.wx_get_sign(function (data) {
-                    that.config.signature = data[0];
-                    that.initWx(shareData);
-                });
-            });
+        _axios2.default.get("/users/common/wx/appid").then(function (data) {
+            if (data.returncode === 1) {
+                return data.message;
+            }
+            call(data);
         });
+
+        // this.wx_get_appid(function (data) {
+
+        //     that.config.appId = data[0];
+        //     that.wx_get_access_token(function (data) {
+        //         that.access_token = data[0];
+        //         that.wx_get_sign(function (data) {
+        //             console.log(that.config,'that.config')
+        //             that.config.signature = data[0];
+        //             that.initWx(shareData);
+        //         });
+        //     });
+        // });
     },
     wx_get_appid: function wx_get_appid(call) {
         _axios2.default.get("/users/common/wx/appid").then(function (data) {
