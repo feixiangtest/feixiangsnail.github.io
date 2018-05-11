@@ -649,6 +649,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   mounted: function mounted() {
     document.title = "斗牛";
     __WEBPACK_IMPORTED_MODULE_1__common_wxShare___default.a.init();
+
     // wxShare.redir();
     setTimeout(function () {
       document.documentElement.scrollTop = 0;
@@ -693,13 +694,15 @@ var wxShare = {
             alert("微信接口调用失败");
             return false;
         }
-        console.log('微信接口调用成功');
+
         var that = this;
+        debug.log('开始调用');
         _axios2.default.get("/users/common/wx/appid").then(function (data) {
-            if (data.returncode === 1) {
-                return data.message;
-            }
-            call(data);
+            debug.log(data, '调用数据');
+            // if(data.returncode===1){
+            //     return data.message;
+            // }
+            // call(data)
         });
 
         // this.wx_get_appid(function (data) {
