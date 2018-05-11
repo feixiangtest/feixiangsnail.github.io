@@ -573,7 +573,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       selectedRoom: "",
       showMask: false,
       showCreateRoomDg: false,
-      playMethod: 'nnsz',
+      playMethod: 0,
       tabCardItem: [__webpack_require__(73), __webpack_require__(68), __webpack_require__(95), __webpack_require__(71), __webpack_require__(90)],
 
       tabCardItemA: [__webpack_require__(74), __webpack_require__(69), __webpack_require__(96), __webpack_require__(72), __webpack_require__(91)],
@@ -596,7 +596,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     changeTitIcon: function changeTitIcon(i) {
       this.tabCardItem = this.cloneArray(this.cloneTabIcon);
       this.tabCardItem[i] = this.tabCardItemA[i];
-      this.playMethod = this.cloneTabIcon[i].slice(-8, -4);
+      this.playMethod = i;
     },
     cloneArray: function cloneArray(arr) {
       var arrClone = [];
@@ -632,20 +632,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     createRoom: function createRoom() {
       this.hideCreateRoomDg();
+    },
+    createPlayImg: function createPlayImg() {
+      for (var i = 0; i < 11; i++) {
+        var url = __webpack_require__(99)("./" + (i + 1) + ".png");
+        this.playWayImages.push(url);
+      }
     }
   },
   components: {},
   created: function created() {
-    for (var i = 0; i < 11; i++) {
-      var url = __webpack_require__(99)("./" + (i + 1) + ".png");
-      this.playWayImages.push(url);
-    }
+    this.createPlayImg();
     this.cloneTabIcon = this.cloneArray(this.tabCardItem);
     this.tabCardItem[0] = this.tabCardItemA[0];
   },
   mounted: function mounted() {
     document.title = "斗牛";
-    __WEBPACK_IMPORTED_MODULE_1__common_wxShare___default.a.redir();
+    __WEBPACK_IMPORTED_MODULE_1__common_wxShare___default.a.init();
+    // wxShare.redir();
     setTimeout(function () {
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
@@ -689,6 +693,7 @@ var wxShare = {
             alert("微信接口调用失败");
             return false;
         }
+        console.log('微信接口调用成功');
         var that = this;
         this.wx_get_appid(function (data) {
             that.config.appId = data[0];
@@ -1185,7 +1190,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "alt": ""
       }
     })]), _vm._v(" "), _c('p', [_vm._v("\n                         " + _vm._s(_vm.playTimeText[i - 1]) + "\n                       ")])])
-  }))]), _vm._v(" "), (_vm.playMethod == 'gdzj') ? _c('div', {
+  }))]), _vm._v(" "), (_vm.playMethod == 1) ? _c('div', {
     staticClass: "createRoomPanel clearfix Kamisho"
   }, [_c('h3', [_vm._v("\n                  上庄:\n                ")]), _vm._v(" "), _c('ul', {
     staticClass: "panelCont clearfix"
