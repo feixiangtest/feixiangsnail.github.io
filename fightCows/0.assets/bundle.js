@@ -697,12 +697,14 @@ var wxShare = {
 
         var that = this;
         debug.log('开始调用');
-        _axios2.default.get("/users/common/wx/appid").then(function (data) {
+        _axios2.default.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").then(function (data) {
             debug.log(data, '调用数据');
             // if(data.returncode===1){
             //     return data.message;
             // }
             // call(data)
+        }).catch(function (res) {
+            debug.log('调用失败');
         });
 
         // this.wx_get_appid(function (data) {
