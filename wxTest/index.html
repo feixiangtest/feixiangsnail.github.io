@@ -1,17 +1,35 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<title>微信测试</title>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 </head>
+
 <body>
-	
+
 </body>
 <script src="js/axios.min.js"></script>
 <script src="js/debug.js"></script>
 <script src="js/wxTest.js"></script>
 <script>
-	
-	
+	if (!wx) {
+		alert("微信接口调用失败");
+	}
+
+	var that = this;
+	debug.log('开始调用')
+	axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").then((data) => {
+		debug.log(data, '调用数据')
+		
+		alert(data, 'data')
+	}).catch((res) => {
+
+		debug.log('调用失败')
+		alert('diaoyongshibai')
+	});
+
 </script>
+
 </html>
