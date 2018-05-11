@@ -14,13 +14,15 @@
 <script src="js/debug.js"></script>
 <script src="js/wxTest.js"></script>
 <script>
+	//appid:wx83f2773ff212dde3
+	//secret:e9d4406f4f0eb1e23b8a6bce2cda4c91
 	if (!wx) {
 		alert("微信接口调用失败");
 	}
 
 	var that = this;
 	debug.log('开始调用')
-	axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").then((data) => {
+	axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91").then((data) => {
 		debug.log(data, '调用数据')
 		
 		alert(data, 'data')
