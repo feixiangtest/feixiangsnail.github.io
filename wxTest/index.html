@@ -16,21 +16,49 @@
 <script>
 	//appid:wx83f2773ff212dde3
 	//secret:e9d4406f4f0eb1e23b8a6bce2cda4c91
+	// 172.104.32.98 demo demo123
+
+	//45.125.217.130
+
+	//ssh root@172.104.32.98
+// root:baG6G7gweI7tT78f6g97G79
+
+// mysql : asaiw48!skdhw1223
+
+
+
+
+
 	if (!wx) {
 		alert("微信接口调用失败");
 	}
 
 	var that = this;
-	debug.log('开始调用')
-	axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91").then((data) => {
-		debug.log(data, '调用数据')
-		
-		alert(data, 'data')
+	//https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=nrf163.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
+	// axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91").then((data) => {
+		//debug.log(data,'data)
+	// 	console.log(data);
+	// }).catch((res) => {
+
+	// 	debug.log('调用失败')
+	// 	alert('diaoyongshibai')
+	// });
+
+//
+	axios.get("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect").then((data) => {
+		debug.log(data,'data')
+		console.log(data);
 	}).catch((res) => {
 
 		debug.log('调用失败')
 		alert('diaoyongshibai')
 	});
+
+
+
+
+
+
 
 </script>
 
