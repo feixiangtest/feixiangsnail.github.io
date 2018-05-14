@@ -8,21 +8,20 @@
 </head>
 
 <body>
-
+微信
 </body>
+<script src="js/jquery.js"></script>
 <script src="js/axios.min.js"></script>
 <script src="js/debug.js"></script>
 <script src="js/wxTest.js"></script>
+
 <script>
 	//appid:wx83f2773ff212dde3
 	//secret:e9d4406f4f0eb1e23b8a6bce2cda4c91
 	// 172.104.32.98 demo demo123
-
 	//45.125.217.130
-
 	//ssh root@172.104.32.98
 	// root:baG6G7gweI7tT78f6g97G79
-
 	// mysql : asaiw48!skdhw1223
 
 
@@ -45,17 +44,39 @@
 	// });
 
 
-	axios.get("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=http://mda2222.com/wxTest/getUserInfo.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect").then((data) => {
-		debug.log(data, 'data22')
-		console.log(data);
-	}).catch((res) => {
+	// axios.get("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=http://mda2222.com/wxTest/getUserInfo.php&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect").then((data) => {
+	// 	debug.log(data, 'data22')
+	// 	console.log(data);
+	// }).catch((res) => {
 
-		debug.log('调用失败')
-		console.log('diaoyongshibai22')
-	});
+	// 	debug.log('调用失败')
+	// 	console.log('diaoyongshibai22')
+	// });
+	// axios.get('./getUserInfo.php').then((data)=>{
+	// 	debug.log(data, 'data22')
+	// 	console.log(data);
+	// }).catch((res)=>{
+	// 	debug.log(res,'失败');
+
+	// })
+
+	$(function () {
+		$.ajax({
+			type: "get",
+			data: null,
+			url: "getUserInfo.php",
+			dataType: "json",
+			timeout: 10000,
+			success: function (d) {
+				console.log(d, '成功')
 
 
-
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				console.log('失败。')
+			}
+		});
+	})
 
 
 

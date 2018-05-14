@@ -1,26 +1,46 @@
 <?php
-if (isset($_GET['code'])) {
-    //print_r($_SERVER['SCRIPT_NAME']);
-    $res = getAccessToken($_GET['code']);
-    //3333
-    $thirdData = refreshToken($res['refresh_token']);
 
-    //4 (sns)
-    getUserInfo($thirdData['access_token'], $thirdData['openid']);
-} else {
-    $url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=http://mda2222.com/wxTest/getUserInfo.php&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
-    header('Location: ' . $url);
+
+
+
+
+
+
+
+
+getUserData();
+
+function getUserData()
+{
+
+
+    if (isset($_GET['code'])) {
+        //获取accessToken
+        $res = getAccessToken($_GET['code']);
+        //如果accessToken失效，再刷新获取.
+
+        if (!checkAccessToken($res['access_token'], $res['openid'])) {
+            $res = refreshToken($res['refresh_token']);
+        }
+        $data = getUserInfo($res['access_token'], $res['openid']);
+        echo $data;
+    } else {
+        //获取code值
+        $url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=http://mda2222.com/wxTest/getUserInfo.php&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+        header('Location: ' . $url);
+    }
+
 }
-print_r($_GET);
+
+//获取accessToken
 function getAccessToken($code)
 {
     $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91&code=' . $code . '&grant_type=authorization_code';
     $res = curl_request($url);
-   // print_r($res);
     return json_decode($res, true);
 
 }
-//第三步获取刷新access_token
+//获取刷新access_token
 function refreshToken($token)
 {
     $url = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=wx83f2773ff212dde3&grant_type=refresh_token&refresh_token=' . $token;
@@ -29,16 +49,28 @@ function refreshToken($token)
     return json_decode($res, true);
 
 }
-//4
+//获取用户信息
 function getUserInfo($accessToken, $openid)
 {
-    $url = 'https://api.weixin.qq.com/sns/userinfo?access_token='.$accessToken.'&openid='.$openid.'&lang=zh_CN';
+    $url = 'https://api.weixin.qq.com/sns/userinfo?access_token=' . $accessToken . '&openid=' . $openid . '&lang=zh_CN';
     $res = curl_request($url);
-    print_r($res);
+
     return json_decode($res, true);
 }
 
-
+//附加判断是否过期
+function checkAccessToken($token, $open)
+{
+    $url = 'https://api.weixin.qq.com/sns/auth?access_token=' . $token . '&openid=' . $open;
+    $res = curl_request($url);
+    // print_r($res);
+    $data = json_decode($res, true);
+    if (isset($data['errmsg']) && $data['errmsg'] == 'ok') {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 
