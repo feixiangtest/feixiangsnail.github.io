@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>微信测试</title>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+</head>
+
+<body>
+</body>
+<script src="js/jquery.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/debug.js"></script>
+<!-- <script src="js/wxTest.js"></script> -->
+<script>
+
+
+// var userInfo = getCookie("wxUserInfo");
+//     if (!userInfo) {
+//         debug.log('失败');
+//          window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx83f2773ff212dde3&redirect_uri=http://mda2222.com/wechat/v1/GetWechatUserInfo&response_type=code&scope=snsapi_userinfo&state=http://mda2222.com:8080/wxTest/index.html&connect_redirect=1#wechat_redirect";
+//     } else {
+
+//         debug.log(getCookie("wxUserInfo"));
+//         document.write(getCookie("wxUserInfo"))
+//     }
+
+
+// function getCookie(name) {
+//     var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+//     if (arr != null) return unescape(arr[2]);
+//     return null;
+// }
+
+$(function(){
+ $.ajax({
+        type: "post",
+        data: { token: wxToken },
+        url: "http://mda2222.com/wechat/v1/GetUserInfo",
+        dataType: "json",
+        timeout: 10000,
+        success: function(d) {
+          that.userInfo = d;
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("获取用户信息失败");
+        }
+      });
+
+
+    
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>微信测试</title>
+</head>
+
+<body>
+</body>
+<script src="js/jquery.js"></script>
+
+<script>
+
+$(function(){
+ $.ajax({
+        type: "get",
+        
+        url: "http://localhost/feixiangsnail.github.io/wxTest/getUserInfo.php?_session_id=1234",
+        dataType: "json",
+        timeout: 10000,
+        success: function(d) {
+
+          console.log(d,'d');
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("获取用户信息失败");
+          console.log(XMLHttpRequest, textStatus, errorThrown)
+        }
+      });
+
+
+    
+})
+
+</script>
+
+</html>

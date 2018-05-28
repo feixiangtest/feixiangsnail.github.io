@@ -37,18 +37,18 @@ let wxShare = {
         });
 
 
-        // this.wx_get_appid(function (data) {
+        this.wx_get_appid(function (data) {
 
-        //     that.config.appId = data[0];
-        //     that.wx_get_access_token(function (data) {
-        //         that.access_token = data[0];
-        //         that.wx_get_sign(function (data) {
-        //             console.log(that.config,'that.config')
-        //             that.config.signature = data[0];
-        //             that.initWx(shareData);
-        //         });
-        //     });
-        // });
+            that.config.appId = data[0];
+            that.wx_get_access_token(function (data) {
+                that.access_token = data[0];
+                that.wx_get_sign(function (data) {
+                    console.log(that.config,'that.config')
+                    that.config.signature = data[0];
+                    that.initWx(shareData);
+                });
+            });
+        });
     },
     wx_get_appid: function (call) {
         axios.get("/users/common/wx/appid").then((data) => {
