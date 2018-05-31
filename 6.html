@@ -19,22 +19,36 @@
 	// 172.104.32.98 demo demo123
 
 	//45.125.217.130
-	if (!wx) {
-		alert("微信接口调用失败");
-	}
+	// var a = 39209029;
 
-	var that = this;
-	debug.log('开始调用')
-	axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91").then((data) => {
-		debug.log(data, '调用数据')
+	// if (!wx) {
+	// 	alert("微信接口调用失败");
+	// }
+
+	// var that = this;
+	// debug.log('开始调用')
+	// axios.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx83f2773ff212dde3&secret=e9d4406f4f0eb1e23b8a6bce2cda4c91").then((data) => {
+	// 	debug.log(data, '调用数据')
 		
-		alert(data, 'data')
-	}).catch((res) => {
+	// 	alert(data, 'data')
+	// }).catch((res) => {
 
-		debug.log('调用失败')
-		alert('diaoyongshibai')
-	});
+	// 	debug.log('调用失败')
+	// 	alert('diaoyongshibai')
+	// });
 
+
+	function abc(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+
+    console.log(abc('CowGameID'));
 </script>
 
 </html>

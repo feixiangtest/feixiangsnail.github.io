@@ -1,14 +1,17 @@
 <?php
-class JSSDK {
+class JSSDK
+{
   private $appId;
   private $appSecret;
 
-  public function __construct($appId, $appSecret) {
+  public function __construct($appId, $appSecret)
+  {
     $this->appId = $appId;
     $this->appSecret = $appSecret;
   }
 
-  public function getSignPackage() {
+  public function getSignPackage()
+  {
     $jsapiTicket = $this->getJsApiTicket();
 
     // 注意 URL 一定要动态获取，不能 hardcode.
@@ -24,17 +27,18 @@ class JSSDK {
     $signature = sha1($string);
 
     $signPackage = array(
-      "appId"     => $this->appId,
-      "nonceStr"  => $nonceStr,
+      "appId" => $this->appId,
+      "nonceStr" => $nonceStr,
       "timestamp" => $timestamp,
-      "url"       => $url,
+      "url" => $url,
       "signature" => $signature,
       "rawString" => $string
     );
-    return $signPackage; 
+    return $signPackage;
   }
 
-  private function createNonceStr($length = 16) {
+  private function createNonceStr($length = 16)
+  {
     $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     $str = "";
     for ($i = 0; $i < $length; $i++) {
@@ -43,7 +47,8 @@ class JSSDK {
     return $str;
   }
 
-  private function getJsApiTicket() {
+  private function getJsApiTicket()
+  {
     // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
     $data = json_decode($this->get_php_file("jsapi_ticket.php"));
     if ($data->expire_time < time()) {
@@ -65,7 +70,8 @@ class JSSDK {
     return $ticket;
   }
 
-  private function getAccessToken() {
+  private function getAccessToken()
+  {
     // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
     $data = json_decode($this->get_php_file("access_token.php"));
     if ($data->expire_time < time()) {
@@ -85,7 +91,8 @@ class JSSDK {
     return $access_token;
   }
 
-  private function httpGet($url) {
+  private function httpGet($url)
+  {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_TIMEOUT, 500);
@@ -101,13 +108,25 @@ class JSSDK {
     return $res;
   }
 
-  private function get_php_file($filename) {
+  private function get_php_file($filename)
+  {
     return trim(substr(file_get_contents($filename), 15));
   }
-  private function set_php_file($filename, $content) {
+  private function set_php_file($filename, $content)
+  {
     $fp = fopen($filename, "w");
     fwrite($fp, "<?php exit();?>" . $content);
     fclose($fp);
   }
 }
 
+function getSign()
+{
+  $jssdk = new JSSDK("wx83f2773ff212dde3", "e9d4406f4f0eb1e23b8a6bce2cda4c91");
+  $signPackage = $jssdk->GetSignPackage();
+ 
+  //print_r(json_decode($signPackage,true));
+   echo json_encode($signPackage);
+   
+}
+getSign();
