@@ -15,7 +15,11 @@
 <script src="axios.min.js"></script>
 <script>
 var url =location.href.split('#')[0]; 
-alert(url,'url')
+var url2 = location.href.split('#')[1]; 
+
+var links = url +'#GameId=123';
+alert(links);
+alert(url2);
 '<?php
 require_once "jssdk.php";
 $jssdk = new JSSDK("wx83f2773ff212dde3", "e9d4406f4f0eb1e23b8a6bce2cda4c91");
@@ -64,13 +68,13 @@ $signPackage = $jssdk->GetSignPackage();
 
                 wx.onMenuShareTimeline({
                     title: shareTitle,
-                    link: window.location.href,
+                    link: links,
                     imgUrl: shareImg
                 });
                 wx.onMenuShareAppMessage({
                     title: shareTitle,
                     desc: shareDesc,
-                    link: window.location.href,
+                    link: links,
                     imgUrl: shareImg,
                     type: 'link'
                 });
@@ -78,19 +82,19 @@ $signPackage = $jssdk->GetSignPackage();
                 wx.onMenuShareQQ({
                     title: shareTitle,
                     desc: shareDesc,
-                    link: window.location.href,
+                    link: links,
                     imgUrl: shareImg
                 });
                 wx.onMenuShareWeibo({
                     title: shareTitle,
                     desc: shareDesc,
-                    link: window.location.href,
+                    link: links,
                     imgUrl: shareImg
                 });
                 wx.onMenuShareQZone({
                     title: shareTitle,
                     desc: shareDesc,
-                    link: window.location.href,
+                    link: links,
                     imgUrl: shareImg
                 });
 
@@ -101,7 +105,7 @@ $signPackage = $jssdk->GetSignPackage();
     }
 
 
-    WxShare2.init({ 'shareTitle': "这个是分享的标题", 'shareImg': 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png', 'shareDesc': '咦，这个描述，你看到了吗？' });
+    WxShare2.init({ 'shareTitle': "这个是分享的标题2", 'shareImg': 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png', 'shareDesc': '咦，这个描述2，你看到了吗？' });
 
 
 
