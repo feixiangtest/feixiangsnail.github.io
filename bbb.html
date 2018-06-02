@@ -1,16 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>helloworld</title>
 </head>
+
 <body>
     helloworld6666
+    <input type="text" id="demo">
+    <p id="display"></p>
 </body>
+
 <script>
     var good = 'jklj';
-</script>
-</html>
+    var obj = {};
+    var bind = {};
+    //触发obj对象set和get方法的时候，趁机来输出或修改bind数组的内容
+    function doubleBind() {
 
+
+    }
+    Object.defineProperty(obj, 's', {
+        set: function (val) {
+            bind['s'] = val;
+        },
+        get: function () {
+            return bind['s'];
+        }
+    })
+    var demo = document.querySelector('#demo');
+    var display = document.querySelector('#display');
+    //#demo的value值与bind['s']绑定，#display的innerHTML也与bind['s']绑定。
+    demo.onkeyup = function () {
+        obj['s'] = demo.value;//触发了obj的set方法，等于#demo的value值赋值给bind['s']。
+        display.innerHTML = bind['s'];
+    }
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</html>
