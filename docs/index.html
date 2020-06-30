@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>API文档</title>
+  <title>统一支付文档</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/vue"></script>
   <link rel="stylesheet" href="resources/vue.css">
   <style type="text/css">
     .sidebar{
@@ -36,6 +38,10 @@
   </style>
 </head>
 <body>
+  <nav>
+    <a href="#/">EN</a>
+    <a href="#/zh-cn/">中文</a>
+  </nav>
   <div id="apiBox"></div>
   <script>
     window.$docsify = {
@@ -44,8 +50,23 @@
       loadSidebar: true,
       loadSidebar: 'summary.md',
       subMaxLevel: 3,
+      coverpage: true,
+      coverpage: 'cover.md',
+      onlyCover: true,
+       //自动显示标题
+       autoHeader: true,
+      //自动跳转到页面顶部
+      auto2top: true,
+      //小屏设备下合并导航栏到侧边栏
+      mergeNavbar: true,
+      search: 'auto',
+      //搜索插件
+      search: {
+        placeholder: '搜索',
+        noData: '没有结果！',
+      },
       name: '',
-      repo: 'https://github.com/feixiangsnail/feixiangsnail.github.io/tree/master/docs'
+      // repo: 'https://github.com/feixiangsnail/feixiangsnail.github.io/tree/master/docs'
     }
   </script>
   <script src="resources/docsify.min.js"></script>
