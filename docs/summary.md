@@ -4,7 +4,7 @@
 * [Guide6](guide.md) -->
 
 * 开发入门
-  * [介绍](/)
+  * [介绍](/start/intro)
   * [接入步骤](/start/useStep)
 * 接口规则
   * [关于RSA](/interfaceRule/aboutRsa)
