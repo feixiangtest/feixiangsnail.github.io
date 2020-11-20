@@ -14,7 +14,10 @@ const bot = new TelegramBot(token, {
   request: { // 设置代理
     agentClass: Agent,
     agentOptions: {
-      socksPassword: 'TA7Ak8XrDe9x7RyyVM'
+    // socksHost: 'us3.chuqianglai.com', // Defaults to 'localhost'.
+		// socksPort: 443, 
+		// socksUsername: 'us3.chuqianglai.com',
+    socksPassword: 'TA7Ak8XrDe9x7RyyVM'
     }
   }
 });
@@ -23,7 +26,6 @@ const bot = new TelegramBot(token, {
 bot.onText(/\/cxgp/, function onLoveText(msg) {
   bot.sendMessage(msg.chat.id, '正在帮您实时推送最近'+configData.withinTime+'小时内的相关信息');
   msgId = msg.chat.id
-  console.log(msgId,'msgId')
   runAll()
   if(timeInterval){
     clearInterval(timeInterval)
@@ -75,7 +77,7 @@ function getData(url,userName){
             if(msgId){
               bot.sendMessage(msgId, msgContent);
             }
-            console.log(msgId,msgContent)
+            console.log(msgContent)
         }
     })
     
