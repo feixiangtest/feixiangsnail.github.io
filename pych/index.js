@@ -2,11 +2,12 @@ const { url } = require("inspector");
 let request = require("request");
 let configData = require('./config').configData
 let keyName = []
+let timeInterval = null
 setInterval(()=>{
     keyName=[]
 },1000*60*60*24)
 runAll()
-setInterval(runAll,1000*5)
+timeInterval = setInterval(runAll,1000*5)
 function runAll(){
     console.log('开始查询最近'+configData.withinTime+'小时的数据')
     configData.urls.map(item=>{
@@ -20,7 +21,7 @@ function getData(url,userName){
     // console.log(body);
     let allData = JSON.parse(body)
     // console.log(allData.rebalancing.rebalancing_histories)
-    allData.rebalancing.rebalancing_histories.map(item=>{
+    allData.rebalancing&&allData.rebalancing.rebalancing_histories.map(item=>{
         let onlyKey = item.id+'_'+item.updated_at
         let passedTime = Date.now()-item.updated_at
         if(keyName.indexOf(onlyKey)===-1&&passedTime<3600*1000*configData.withinTime){

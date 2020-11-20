@@ -2,8 +2,12 @@ const TelegramBot = require('node-telegram-bot-api');
 const Agent = require('socks5-https-client/lib/Agent');
 let request = require("request");
 let configData = require('./config').configData
-
+let timeInterval = null
 let msgId = ''
+let keyName = []
+let keyNameTime = setInterval(()=>{
+    keyName=[]
+},1000*60*60*24)
 const token = '1416043424:AAEsGDNnL5vBAJYs6836ldwoAYCLgFNNZTU';
 const bot = new TelegramBot(token, {
   polling: true,
@@ -21,7 +25,21 @@ bot.onText(/\/cxgp/, function onLoveText(msg) {
   msgId = msg.chat.id
   console.log(msgId,'msgId')
   runAll()
-setInterval(runAll,1000*5)
+  if(timeInterval){
+    clearInterval(timeInterval)
+    timeInterval = setInterval(runAll,1000*5)
+  }
+  
+});
+// 匹配/hentai
+bot.onText(/\/stop/, function onLoveText(msg) {
+  bot.sendMessage(msg.chat.id, '已停止查询');
+  keyName = []
+  clearInterval(timeInterval)
+  clearInterval(keyNameTime)
+});
+bot.onText(/\/test/, function onLoveText(msg) {
+  bot.sendMessage(msg.chat.id, 'hello,welcome my channel'); 
 });
 
 
@@ -32,10 +50,7 @@ setInterval(runAll,1000*5)
 //   const resp = match[1];
 //   bot.sendMessage(chatId, resp);
 // });
-let keyName = []
-setInterval(()=>{
-    keyName=[]
-},1000*60*60*24)
+
 // runAll()
 // setInterval(runAll,1000*5)
 function runAll(){
@@ -47,10 +62,9 @@ function runAll(){
 function getData(url,userName){
     
     request(url, function (error, response, body) {
-  if (!error) {
-    // console.log(body);
+    if (!error) {
     let allData = JSON.parse(body)
-    // console.log(allData.rebalancing.rebalancing_histories)
+    if(!allData.rebalancing) return;
     allData.rebalancing.rebalancing_histories.map(item=>{
         let onlyKey = item.id+'_'+item.updated_at
         let passedTime = Date.now()-item.updated_at
@@ -63,7 +77,6 @@ function getData(url,userName){
             }
             console.log(msgId,msgContent)
         }
-        // resultData.push()
     })
     
   }
