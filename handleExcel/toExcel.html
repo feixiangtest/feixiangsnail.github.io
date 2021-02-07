@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <body>
+        <input type="file" id='btn' onchange='upload()'>
+        <!-- <a download='hz.7z' id='btn2'>下载</a> -->
+    </body>
+</body>
+<script src="xlsl.mini.min.js"></script>
+<script>
+    // function handleFile(){
+    //     console.log(document.getElementById('btn').files[0])
+    //     let reader = new FileReader()
+    //     reader.readAsArrayBuffer(document.getElementById('btn').files[0])
+    //     reader.onload= function(e){
+    //         document.getElementById('btn2').href = window.URL.createObjectURL(new Blob([pako.inflate(new Uint8Array(e.target.result)).reverse()]))
+    //     }
+    // }
+    function tableToExcel(jsonData) {
+        //列标题，逗号隔开，每一个逗号就是隔开一个单元格
+        var str = "姓名,电话,邮箱\n";
+        //增加\t为了不让表格显示科学计数法或者其他格式
+        for (var i = 0; i < jsonData.length; i++) {
+            for (var item in jsonData[i]) {
+                str += jsonData[i][item] + "\t,";
+            }
+            str += '\n';
+        }
+        //encodeURIComponent解决中文乱码
+        var uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+        //通过创建a标签实现
+        var link = document.createElement("a");
+        link.href = uri;
+        //对下载的文件命名
+        link.download = "json数据表.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    function getFirst(list) {
+        list.sort(function (a, b) {
+            let t1 = new Date(Date.parse(a.productTime.replace(/-/g, "/")))
+            let t2 = new Date(Date.parse(b.productTime.replace(/-/g, "/")))
+            return t1.getTime() - t2.getTime()
+        })
+        return list[0]
+    }
+    //解决excel日期格式问题
+    function formatExcelTime(num, format = '-') {
+        num = Number(num);	// 强制类型转化，以防传来的值是字符串
+        let millisecond = 0;	// 转化后的毫秒数
+        if (num > 60) {
+            millisecond = (num - 25569) * 60 * 60 * 24 * 1000;
+        } else { // 对小于61的错误日期进行处理
+            millisecond = (num - 25568) * 60 * 60 * 24 * 1000;
+        }
+        let date = new Date(millisecond);	// 根据转化后的毫秒数获取对应的时间
+        let yy = date.getFullYear();
+        let mm = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        let dd = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        return yy + format + mm + format + dd;	// 返回格式化后的日期
+    }
+    //处理数组对象
+    const handleData = xmlData => {
+        let newData = {}
+        xmlData.forEach(e => {
+            e['productTime'] = formatExcelTime(e['日(承保日期)'])
+            // 新建属性名
+            if (Object.keys(newData).indexOf('' + e.TSR) === -1) {
+                newData[e.TSR] = []
+            }
+            // 对应插入属性值
+            newData[e.TSR].push(e)
+        })
+        let resList = []
+        for (var item in newData) {
+            resList.push(getFirst(newData[item]))
+        }
+        console.log(newData, 'newData')
+        console.log(resList, 'resList')
+        tableToExcel(resList)
+
+    }
+    function upload() {
+        // console.log(e,'eee')
+        // const f = e.file;
+        const reader = new FileReader();  // 使用 FileReader 读取数据
+        reader.readAsArrayBuffer(document.getElementById('btn').files[0])
+        reader.onload = function (e) {  // 数据读取完成后的回调函数
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });  // workbook 是 xlsx 解析 excel 后返回的对象
+
+            const firstSheetName = workbook.SheetNames[0];  // 获取第一个 sheet 的名字
+            const worksheet = workbook.Sheets[firstSheetName];  // 获取第一个 sheet 的内容
+            const res = XLSX.utils.sheet_to_json(worksheet);  // 使用 utils 里的方法转换内容为便于使用的数组
+            console.log(res,'res')
+            handleData(res)
+
+        };
+        // reader.readAsArrayBuffer(f);  // 读取数据
+        
+    };
+
+</script>
+
+</html>
